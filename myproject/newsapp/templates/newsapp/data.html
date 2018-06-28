@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %}
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'newsapp/style.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="\static\scripts\delete.js" type="text/javascript"></script>
+    <script src="\static\scripts\rating.js" type="text/javascript"></script>
+    <title>{{selected_article.name}}</title>
+  </head>
+  <body>
+
+    <ul>
+      <!-- Display different elements based on whether the user is logged in or not  -->
+      <li><a href="{% url 'index' %}">News</a></li>
+      {% if user.is_authenticated %}
+      <li style="float:right"> <a href="{% url 'logout_view' %}">Logout</a> </li>
+      <li style="float:right"> <a href="{% url 'display_account' %}">Account</a> </li>
+      {% else %}
+          <li style="float:right"><a href="{% url 'display_login' %}">Login</a></li>
+          <li style="float:right"><a href= "{% url 'display_register' %}" >Register</a></li>
+      {% endif %}
+
+    </ul>
+
+    <!-- Store hidden data so it can be used by ajax -->
+    <input type="hidden" id="user_full_name" name="" value="{{user.get_full_name}}">
+    <input type="hidden" id="username" name="" value="{{user.get_username}}">
+    <input type="hidden" id="article_id" name="" value="{{selected_article.id}}">
+
+    <!-- Display the selected article -->
+    <h2>{{selected_article.name}}</h2>
+    <!-- Display the image of the selected article -->
+    <img class="data_image" src="{{selected_article.image}}" alt="image">
+    <!-- Display the content of the selected article -->
+    <p>{{selected_article.description}}</p>
+
+    <!-- Display different attributes based on weather if the user has rated or not -->
+    <div class="rating-buttons">
+      {% if ratings %}
+          {% for rating in ratings %}
+            {% if rating.rating_type == True %}
+              <button class="dislike_article" type="button" name="dislike"><span  class="fa fa-thumbs-down" id="thumbs-down"></span></button>
+              <button class="like_article" type="button" name="like"><span style="color: royalblue" class="fa fa-thumbs-up" id="thumbs-up"></span></button>
+            {% elif rating.rating_type == False %}
+              <button class="dislike_article" type="button" name="dislike"><span style="color: red"class="fa fa-thumbs-down" id="thumbs-down"></span></button>
+              <button class="like_article" type="button" name="like"><span class="fa fa-thumbs-up" id="thumbs-up"></span></button>
+            {% endif %}
+
+          {% endfor %}
+      {% else %}
+            <button class="dislike_article" type="button" name="dislike"><span  class="fa fa-thumbs-down" id="thumbs-down"></span></button>
+            <button class="like_article" type="button" name="like"><span class="fa fa-thumbs-up" id="thumbs-up"></span></button>
+      {% endif %}
+    </div>
+    <br>
+
+    <hr>
+      <!-- Display the comments that have been made to the selected article and different attributes base on if the user is logged in or not -->
+      <div class="comments-list">
+      {% for comment in comments %}
+        {% if user.email == comment.user_email %}
+          <div>
+            <p>{{comment.user_full_name}} {{comment.pub_date}}</p>
+            <p> {{comment.comment}}</p>
+            <br>
+            <button class="delete_comment" type="button" name="Delete" id = '{{comment.id}}'>Delete</button>
+            <hr>
+          </div>
+        {% else %}
+          <p>{{comment.user_full_name}} {{comment.pub_date}}</p>
+          <p>{{comment.comment}}</p>
+          <hr>
+        {% endif %}
+        {% endfor %}
+      </div>
+    {% if user.is_authenticated %}
+      <form class="comment-form"  method="POST">
+        {% csrf_token %}
+        <textarea class="comment" id="comment" name="name" rows="8" cols="100"></textarea>
+
+        <input type="Submit" class="submit_comment" name="" value="Submit">
+        <script src="\static\scripts\addComment.js" type="text/javascript"></script>
+      </form>
+    {% else %}
+
+      <p>Please login or register to comment</p>
+    {% endif %}
+  </body>
+</html>

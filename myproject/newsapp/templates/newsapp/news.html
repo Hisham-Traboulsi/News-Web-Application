@@ -1,0 +1,106 @@
+<!-- display all the articles with their respective images and information -->
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'newsapp/style.css' %}" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <title>Home</title>
+  </head>
+  <body>
+
+				<ul>
+          <li><a href="{% url 'index' %}"> Latest</a></li>
+					<li><a href="#sports_title">Sports</a></li>
+					<li><a href="#politics_title">Politics</a></li>
+					<li><a href="#technology_title">Technology</a></li>
+          <li><a href="#films_title">Film</a></li>
+          {% if user.is_authenticated %}
+          <li style="float:right"> <a href="{% url 'logout_view' %}">Logout</a> </li>
+          <li style="float:right"> <a href="{% url 'display_account' %}">Account</a> </li>
+          {% else %}
+              <li style="float:right"><a href="{% url 'display_login' %}">Login</a></li>
+              <li style="float:right"><a href= "{% url 'display_register' %}" >Register</a></li>
+          {% endif %}
+
+				</ul>
+
+			<h1>Latest News</h1>
+
+      {% if user.is_authenticated %}
+             <p class="lead">Welcome, {{ user.get_short_name }}</p>
+             {% else %}
+             <p class="lead">Welcome, new user. Please log in or Register.</p>
+           {% endif %}
+      <div>
+           <h2 class="title" id="films_title">Films</h2>
+       {% for article in article_list %}
+
+        {% if article.category == "Film" %}
+
+        <figure>
+          <a href="{% url 'data' article.id %}"><img src="{{article.image}}"></a>
+          <figcaption><a href="{% url 'data' article.id %}">{{article.name}} </a></figcaption>
+        </figure>
+
+        {% endif %}
+
+       {% endfor %}
+
+       </div>
+       <div>
+       <h2 class="title" id="politics_title">Politics</h2>
+       {% for article in article_list %}
+
+        {% if article.category == "Politics" %}
+
+        <figure>
+          <a href="{% url 'data' article.id %}"><img src="{{article.image}}"></a>
+          <figcaption><a href="{% url 'data' article.id %}">{{article.name}} </a></figcaption>
+        </figure>
+
+        {% endif %}
+
+       {% endfor %}
+   </div>
+       <p></p>
+       <p></p>
+       <div>
+
+       <h2 class="title" id="sports_title">Sports</h2>
+
+       {% for article in article_list %}
+
+        {% if article.category == "Sport" %}
+
+        <figure>
+          <a href="{% url 'data' article.id %}"><img src="{{article.image}}"></a>
+          <figcaption><a href="{% url 'data' article.id %}">{{article.name}} </a></figcaption>
+        </figure>
+
+        {% endif %}
+
+       {% endfor %}
+   </div>
+
+   <div>
+
+       <h2 class="title" id="technology_title">Technology</h2>
+
+       {% for article in article_list %}
+
+        {% if article.category == "Technology" %}
+
+        <figure>
+          <a href="{% url 'data' article.id %}"><img src="{{article.image}}"></a>
+          <figcaption><a href="{% url 'data' article.id %}">{{article.name}} </a></figcaption>
+        </figure>
+
+        {% endif %}
+
+       {% endfor %}
+ </div>
+
+  </body>
+</html>
